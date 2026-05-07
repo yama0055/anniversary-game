@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Memories Quiz</title>
+    <style>
+        :root { --main-color: #ffafbd; --sub-color: #ffc3a0; }
+        body { font-family: 'Helvetica Neue', Arial, sans-serif; background: linear-gradient(135deg, var(--main-color), var(--sub-color)); margin: 0; min-height: 100vh; display: flex; justify-content: center; align-items: center; color: #444; }
+        #game-container { background: rgba(255, 255, 255, 0.9); width: 90%; max-width: 400px; padding: 20px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); text-align: center; }
+        .hidden { display: none; }
+        img { width: 100%; border-radius: 15px; margin-bottom: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .btn { display: block; width: 100%; padding: 15px; margin: 10px 0; border: none; border-radius: 30px; font-size: 16px; font-weight: bold; cursor: pointer; transition: transform 0.2s; background: white; border: 2px solid var(--main-color); }
+        .btn:active { transform: scale(0.95); }
+        .btn-choice { color: #d63384; }
+        .btn-choice:hover { background: var(--main-color); color: white; }
+        #feedback { font-weight: bold; height: 1.2em; margin: 10px 0; }
+        .confetti { position: fixed; width: 10px; height: 10px; background-color: #f2d74e; position: absolute; z-index: 1000; }
+    </style>
+</head>
+<body>
+
+<div id="game-container">
+    <!-- コース選択画面 -->
+    <div id="course-select">
+        <h2>思い出クイズ ❤️</h2>
+        <p>コースを選んでね</p>
+        <button class="btn" onclick="startCourse('courseA')">A: 初めて編</button>
+        <button class="btn" onclick="startCourse('courseB')">B: 日常編</button>
+        <button class="btn" onclick="startCourse('courseC')">C: マニアック編</button>
+    </div>
+
+    <!-- クイズ画面 -->
+    <div id="quiz-screen" class="hidden">
+        <p id="question-count"></p>
+        <img id="quiz-image" src="" alt="思い出の写真">
+        <h3 id="question-text"></h3>
+        <div id="choices">
+            <button id="btn0" class="btn btn-choice" onclick="checkAnswer(0)"></button>
+            <button id="btn1" class="btn btn-choice" onclick="checkAnswer(1)"></button>
+        </div>
+        <div id="feedback"></div>
+        <p id="comment-text" class="hidden"></p>
+        <button id="next-btn" class="btn hidden" style="background: #4caf50; color: white;" onclick="nextQuestion()">次へ進む</button>
+    </div>
+
+    <!-- 終了画面 -->
+    <div id="result-screen" class="hidden">
+        <h2>コースクリア！ ✨</h2>
+        <p>さすがだね！全部正解です。</p>
+        <button class="btn" onclick="location.reload()">トップに戻る</button>
+    </div>
+</div>
+
+<script>
+    const quizData = {
+        courseA: [
+            { img: "images/photo1.jpg", q: "ここ、どこだか覚えてる？", choices: ["江ノ島", "鎌倉"], a: 0, comment: "正解！初めての遠出だったね。" },
+            { img: "images/photo2.jpg", q: "この時食べたケーキの味は？", choices: ["チョコ", "イチゴ"], a: 1, comment: "そうそう！すごく甘かったやつ。" }
+        ],
+        // courseB, courseC も同様に作成
+    };
+
+    let currentCourse = [];
+    let currentIndex = 0;
+
+    function startCourse(courseId) {
+        currentCourse = quizData[courseId];
+        currentIndex = 0;
+        document.getElementById('course-select').classList.add('hidden');
+        document.getElementById('quiz-screen').classList.remove('hidden');
+        showQuestion();
+    }
+
+    function showQuestion() {
+        const q = currentCourse[currentIndex];
+        document.getElementById('question-count').innerText = `${currentIndex + 1} / ${currentCourse.length}`;
+        document.getElementById('quiz-image').src = q.img;
+        document.getElementById('question-text').innerText = q.q;
+        document.getElementById('btn0').innerText = q.choices[0];
+        document.getElementById('btn1').innerText = q.choices[1];
+        document.getElementById('feedback').innerText = "";
+        document.getElementById('comment-text').classList.add('hidden');
+        document.getElementById('next-btn').classList.add('hidden');
+    }
+
+    function checkAnswer(choiceIdx) {
+        const q = currentCourse[currentIndex];
+        const feedback = document.getElementById('feedback');
+        if (choiceIdx === q.a) {
+            feedback.innerText = "⭕️ 正解！！";
+            feedback.style.color = "green";
+            document.getElementById('comment-text').innerText = q.comment;
+            document.getElementById('comment-text').classList.remove('hidden');
+            document.getElementById('next-btn').classList.remove('hidden');
+            createConfetti();
+        } else {
+            feedback.innerText = "❌ 違うよ〜！もう一回！";
+            feedback.style.color = "red";
+        }
+    }
+
+    function nextQuestion() {
+        currentIndex++;
+        if (currentIndex < currentCourse.length) {
+            showQuestion();
+        } else {
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('result-screen').classList.remove('hidden');
+        }
+    }
+
+    // 簡易的な紙吹雪演出
+    function createConfetti() {
+        for (let i = 0; i < 30; i++) {
+            const confetti = document.createElement('div');
+            confetti.className = 'confetti';
+            confetti.style.left = Math.random() * 100 + 'vw';
+            confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+            confetti.style.top = '-10px';
+            document.body.appendChild(confetti);
+            const animation = confetti.animate([
+                { transform: 'translate3d(0,0,0)', opacity: 1 },
+                { transform: `translate3d(${(Math.random()-0.5)*200}px, 100vh, 0)`, opacity: 0 }
+            ], { duration: 2000, easing: 'ease-out' });
+            animation.onfinish = () => confetti.remove();
+        }
+    }
+</script>
+</body>
+</html>
