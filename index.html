@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Our Memories & Happy Birthday</title>
+    <title>かわやまクイズ！</title>
     <style>
         :root {
             --main-pink: #ffafbd;
@@ -37,7 +37,6 @@
         .hidden { display: none; }
         h2 { color: #d63384; margin-bottom: 20px; }
 
-        /* 画像フレーム共通設定 */
         .photo-frame {
             width: 100%;
             max-height: 250px;
@@ -48,13 +47,11 @@
             border: 4px solid white;
         }
 
-        /* タイトル画像専用（少し大きめ） */
         .title-photo {
             max-height: 300px;
             margin-bottom: 25px;
         }
 
-        /* ボタン */
         .btn {
             display: block;
             width: 100%;
@@ -69,14 +66,24 @@
             background: white;
             border: 2px solid var(--main-pink);
             color: #d63384;
+            text-decoration: none;
         }
 
-        .btn:active { transform: scale(0.96); }
-        .btn-choice:hover { background: var(--main-pink); color: white; }
+        .btn:active:not(:disabled) { transform: scale(0.96); }
+        .btn-choice:hover:not(:disabled) { background: var(--main-pink); color: white; }
+        
+        /* 非活性ボタンのスタイル */
+        .btn:disabled {
+            background: #eee;
+            border-color: #ccc;
+            color: #aaa;
+            cursor: not-allowed;
+        }
+
         .btn-next { background: #4caf50 !important; color: white !important; border: none !important; margin-top: 20px; }
 
         #feedback { font-size: 1.3em; font-weight: bold; margin: 10px 0; height: 1.5em; }
-        #comment-text { font-size: 15px; line-height: 1.6; background: #fff5f7; padding: 15px; border-radius: 10px; margin-top: 5px; }
+        #comment-text { font-size: 15px; line-height: 1.6; background: #fff5f7; padding: 15px; border-radius: 10px; margin-top: 5px; white-space: pre-wrap; }
 
         #scrolling-message { font-size: 16px; line-height: 2; white-space: pre-wrap; margin: 20px 0; }
         .confetti { position: fixed; width: 8px; height: 8px; z-index: 1000; }
@@ -85,14 +92,13 @@
 <body>
 
 <div id="game-container">
-    <!-- 1. コース選択画面（タイトル画像追加） -->
+    <!-- 1. コース選択画面 -->
     <div id="course-select">
         <img src="images/title.jpg" class="photo-frame title-photo" alt="タイトル写真">
-        <h2>Memory Quiz ❤️</h2>
-        <p>二人の軌跡を振り返ろう</p>
-        <button class="btn" onclick="startCourse('enkyori')">遠距離編</button>
-        <button class="btn" onclick="startCourse('courseB')">コースB（準備中）</button>
-        <button class="btn" onclick="startCourse('courseC')">コースC（準備中）</button>
+        <h2>かわやまクイズ！</h2>
+        <button class="btn btn-choice" onclick="startCourse('enkyori')">遠距離編</button>
+        <button class="btn" disabled>準備中</button>
+        <button class="btn" disabled>準備中</button>
     </div>
 
     <!-- 2. クイズ画面 -->
@@ -131,14 +137,13 @@
     const quizData = {
         enkyori: [
             { q: "遠距離が始まった日はいつでしょう？", choices: ["3月の3週目", "3月の4週目"], a: 1, img: "images/1.jpg", comment: "3/27が最終日。ギリギリまで粘ったのが懐かしい。。" },
-            { q: "遠距離が始まる前に食べた晩御飯は何でしょう？", choices: ["ピザ", "牛タン"], a: 1, img: "images/2.jpg", comment: "また食べに行きたい。行く。" },
-            { q: "遠距離が始まって最初に訪れた場所はどこでしょう？", choices: ["大阪城公園", "小動物カフェ"], a: 0, img: "images/3.jpg", comment: "ピクニックの良さに気付いた日。" },
+            { q: "遠距離が始まる前に食べた晩御飯は何でしょう？", choices: ["ピザ", "牛タン"], a: 1, img: "images/2.jpg", comment: "また食べに行きたい。一緒に行こう！！" },
+            { q: "遠距離が始まって最初に訪れた場所はどこでしょう？", choices: ["大阪城公園", "小動物カフェ"], a: 0, img: "images/3.jpg", comment: "ピクニックの良さに気付いた日！" },
             { q: "遠距離になってから2人で訪れた旅行先は合計何県でしょう？（大阪、愛媛を除く）", choices: ["７", "１１", "１３"], a: 1, img: "images/4.jpg", comment: "愛知、香川、沖縄、滋賀、岐阜、福岡、佐賀、長崎、石川、福井、三重に行きました！目指せ全国制覇！" },
-            { q: "遠距離になってからかわとやまは合計何回飛行機に乗ったでしょう？", choices: ["72回", "82回", "92回"], a: 2, img: "images/5.jpg", comment: "大阪26回、愛媛17回、沖縄1回、福岡1回、東京：1回の内訳。ANAありがとう。。\nちなみに香川は4回。" },
+            { q: "遠距離になってからかわとやまは合計何回飛行機に乗ったでしょう？", choices: ["72回", "82回", "92回"], a: 2, img: "images/5.jpg", comment: "大阪26回、愛媛17回、沖縄1回、福岡1回、東京1回の内訳。ANAありがとう。。\nちなみに香川は4回。" },
             { q: "遠距離を始めてから同棲開始までどれくらいの日付が経ったでしょう？", choices: ["585日", "685日", "785日"], a: 2, img: "images/6.jpg", comment: "約6782万秒耐えたらしい。すごい。" },
             { q: "やまはなぜ奈良に行く決断ができたでしょう？", choices: ["かわと一緒に過ごしていきたいから。", "なんとなく。"], a: 0, img: "images/7.jpg", comment: "一緒に幸せに過ごしていこうね！" }
-        ],
-        courseB: [], courseC: []
+        ]
     };
 
     let currentCourse = [];
@@ -146,7 +151,7 @@
 
     function startCourse(courseId) {
         currentCourse = quizData[courseId];
-        if (!currentCourse || currentCourse.length === 0) return alert("準備中だよ！");
+        if (!currentCourse || currentCourse.length === 0) return;
         currentIndex = 0;
         document.getElementById('course-select').classList.add('hidden');
         document.getElementById('quiz-screen').classList.remove('hidden');
