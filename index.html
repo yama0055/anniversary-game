@@ -25,40 +25,38 @@
         }
 
         #game-container {
-            background: rgba(255, 255, 255, 0.92);
+            background: rgba(255, 255, 255, 0.95);
             width: 90%;
-            max-width: 400px;
+            max-width: 420px;
             padding: 30px 20px;
             border-radius: 25px;
             box-shadow: 0 15px 35px rgba(0,0,0,0.15);
             text-align: center;
-            position: relative;
         }
 
         .hidden { display: none; }
-
         h2 { color: #d63384; margin-bottom: 20px; }
 
-        /* 写真のスタイル */
+        /* 写真：解説画面のみ表示 */
         .photo-frame {
             width: 100%;
-            height: 250px;
+            max-height: 250px;
             object-fit: cover;
             border-radius: 15px;
-            margin-bottom: 20px;
+            margin: 15px 0;
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            border: 5px solid white;
+            border: 4px solid white;
         }
 
-        /* ボタンのスタイル */
+        /* ボタン */
         .btn {
             display: block;
             width: 100%;
-            padding: 16px;
-            margin: 12px 0;
+            padding: 14px;
+            margin: 10px 0;
             border: none;
             border-radius: 50px;
-            font-size: 16px;
+            font-size: 15px;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.2s;
@@ -68,60 +66,14 @@
         }
 
         .btn:active { transform: scale(0.96); }
+        .btn-choice:hover { background: var(--main-pink); color: white; }
+        .btn-next { background: #4caf50 !important; color: white !important; border: none !important; margin-top: 20px; }
 
-        .btn-choice:hover {
-            background: var(--main-pink);
-            color: white;
-        }
+        #feedback { font-size: 1.3em; font-weight: bold; margin: 10px 0; height: 1.5em; }
+        #comment-text { font-size: 15px; line-height: 1.6; background: #fff5f7; padding: 15px; border-radius: 10px; margin-top: 5px; }
 
-        .btn-next {
-            background: #4caf50 !important;
-            color: white !important;
-            border: none !important;
-            margin-top: 20px;
-        }
-
-        /* フィードバック */
-        #feedback {
-            font-size: 1.2em;
-            font-weight: bold;
-            margin: 15px 0;
-            height: 1.5em;
-        }
-
-        #comment-text {
-            font-size: 14px;
-            background: #fff5f7;
-            padding: 10px;
-            border-radius: 10px;
-            margin-top: 10px;
-        }
-
-        /* メッセージ画面 */
-        #final-message-box {
-            animation: fadeIn 2.5s ease-in-out;
-        }
-
-        #scrolling-message {
-            font-size: 16px;
-            line-height: 2;
-            text-align: center;
-            white-space: pre-wrap;
-            margin: 20px 0;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* 紙吹雪 */
-        .confetti {
-            position: fixed;
-            width: 8px;
-            height: 8px;
-            z-index: 1000;
-        }
+        #scrolling-message { font-size: 16px; line-height: 2; white-space: pre-wrap; margin: 20px 0; }
+        .confetti { position: fixed; width: 8px; height: 8px; z-index: 1000; }
     </style>
 </head>
 <body>
@@ -130,109 +82,123 @@
     <!-- 1. コース選択画面 -->
     <div id="course-select">
         <h2>Memory Quiz ❤️</h2>
-        <p>全問正解でメッセージがあるよ！</p>
-        <button class="btn" onclick="startCourse('courseA')">A: 出会った頃編</button>
-        <button class="btn" onclick="startCourse('courseB')">B: ふたりの日常編</button>
-        <button class="btn" onclick="startCourse('courseC')">C: 超マニアック編</button>
+        <p>二人の軌跡を振り返ろう</p>
+        <button class="btn" onclick="startCourse('enkyori')">遠距離編</button>
+        <button class="btn" onclick="startCourse('courseB')">コースB（準備中）</button>
+        <button class="btn" onclick="startCourse('courseC')">コースC（準備中）</button>
     </div>
 
     <!-- 2. クイズ画面 -->
     <div id="quiz-screen" class="hidden">
         <p id="question-count" style="font-size: 0.8em; color: #999;"></p>
-        <img id="quiz-image" class="photo-frame" src="" alt="思い出">
-        <h3 id="question-text"></h3>
-        <div id="choices">
-            <button id="btn0" class="btn btn-choice" onclick="checkAnswer(0)"></button>
-            <button id="btn1" class="btn btn-choice" onclick="checkAnswer(1)"></button>
+        <h3 id="question-text" style="margin: 20px 0;"></h3>
+        
+        <!-- 解説時のみ表示されるエリア -->
+        <div id="answer-area" class="hidden">
+            <div id="feedback"></div>
+            <img id="quiz-image" class="photo-frame" src="" alt="思い出の写真">
+            <div id="comment-text"></div>
+            <button id="next-btn" class="btn btn-next" onclick="nextQuestion()">次へ進む ✨</button>
         </div>
-        <div id="feedback"></div>
-        <div id="comment-text" class="hidden"></div>
-        <button id="next-btn" class="btn btn-next hidden" onclick="nextQuestion()">次へ進む ✨</button>
+
+        <!-- 選択肢エリア -->
+        <div id="choices-area"></div>
     </div>
 
     <!-- 3. 終了・誕生日メッセージ画面 -->
     <div id="result-screen" class="hidden">
-        <div id="final-message-box">
-            <h2 style="font-size: 1.8em;">Happy Birthday! 🎂</h2>
-            <img src="images/final.jpg" class="photo-frame" style="border-color: var(--accent-gold);" alt="最高の1枚">
-            <div id="scrolling-message">
+        <h2 style="font-size: 1.8em;">Happy Birthday! 🎂</h2>
+        <img src="images/final.jpg" class="photo-frame" style="border-color: var(--accent-gold);">
+        <div id="scrolling-message">
 全問正解おめでとう！
 
-このクイズを作りながら、
-一緒に過ごした時間を振り返って
-改めて君のことが大好きだなと思ったよ。
+遠距離の期間、寂しい時もあったけど
+こうして振り返ると全部が大切な思い出です。
 
-いつも隣にいてくれてありがとう。
-〇〇にとって、
-最高に幸せな1年になりますように！
-            </div>
-            <button class="btn" style="background: var(--main-pink); color: white;" onclick="location.reload()">最初から遊ぶ</button>
+いつも支えてくれてありがとう。
+これからも隣で一緒に幸せになろうね！
         </div>
+        <button class="btn" style="background: var(--main-pink); color: white;" onclick="location.reload()">最初から遊ぶ</button>
     </div>
 </div>
 
 <script>
-    // クイズデータ（ここを自分の思い出に合わせて書き換えてください）
     const quizData = {
-        courseA: [
-            { img: "images/a1.jpg", q: "初めて会った時、僕が着ていた服の色は？", choices: ["黒色", "ネイビー"], a: 0, comment: "正解！緊張してて、服を選ぶのに1時間かかったんだよ（笑）" },
-            { img: "images/a2.jpg", q: "最初のデートで行った場所はどっち？", choices: ["水族館", "映画館"], a: 1, comment: "そう！あの時観た映画の内容、実はあまり覚えてないくらい緊張してた。" }
+        enkyori: [
+            { q: "遠距離が始まった日はいつでしょう？", choices: ["3月の3週目", "3月の4週目"], a: 1, img: "images/1.jpg", comment: "3/27が最終日。ギリギリまで粘ったのが懐かしい。。" },
+            { q: "遠距離が始まる前に食べた晩御飯は何でしょう？", choices: ["ピザ", "牛タン"], a: 1, img: "images/2.jpg", comment: "また食べに行きたい。行く。" },
+            { q: "遠距離が始まって最初に訪れた場所はどこでしょう？", choices: ["大阪城公園", "小動物カフェ"], a: 0, img: "images/3.jpg", comment: "ピクニックの良さに気付いた日。" },
+            { q: "遠距離になってから2人で訪れた旅行先は合計何県でしょう？（大阪、愛媛を除く）", choices: ["７", "１１", "１３"], a: 1, img: "images/4.jpg", comment: "愛知、香川、沖縄、滋賀、岐阜、福岡、佐賀、長崎、石川、福井、三重に行きました！目指せ全国制覇！" },
+            { q: "遠距離になってからかわとやまは合計何回飛行機に乗ったでしょう？", choices: ["72回", "82回", "92回"], a: 2, img: "images/5.jpg", comment: "大阪26回、愛媛17回、沖縄1回、福岡1回、東京：1回の内訳。ANAありがとう。。\nちなみに香川は4回。" },
+            { q: "遠距離を始めてから同棲開始までどれくらいの日付が経ったでしょう？", choices: ["585日", "685日", "785日"], a: 2, img: "images/6.jpg", comment: "約6782万秒耐えたらしい。すごい。" },
+            { q: "やまはなぜ奈良に行く決断ができたでしょう？", choices: ["かわと一緒に過ごしていきたいから。", "なんとなく。"], a: 0, img: "images/7.jpg", comment: "一緒に幸せに過ごしていこうね！" }
         ],
-        courseB: [
-            { img: "images/b1.jpg", q: "君が作ってくれた料理で、僕が一番感動したのは？", choices: ["オムライス", "肉じゃが"], a: 0, comment: "正解！ケチャップで書いたメッセージ、嬉しくて写真撮ったよね。" }
-        ],
-        courseC: [
-            { img: "images/c1.jpg", q: "この旅行のとき、君が失くしたものは？", choices: ["片方のイヤリング", "ホテルの鍵"], a: 0, comment: "よく覚えてるね！二人で必死に砂浜を探したのもいい思い出。" }
-        ]
+        courseB: [], courseC: [] // 必要に応じて追加
     };
 
     let currentCourse = [];
     let currentIndex = 0;
 
-    // コース開始
     function startCourse(courseId) {
         currentCourse = quizData[courseId];
+        if (currentCourse.length === 0) return alert("準備中だよ！");
         currentIndex = 0;
         document.getElementById('course-select').classList.add('hidden');
         document.getElementById('quiz-screen').classList.remove('hidden');
         showQuestion();
     }
 
-    // 問題表示
     function showQuestion() {
         const q = currentCourse[currentIndex];
-        document.getElementById('question-count').innerText = `Question ${currentIndex + 1} / ${currentCourse.length}`;
-        document.getElementById('quiz-image').src = q.img;
+        document.getElementById('question-count').innerText = `第 ${currentIndex + 1} 問 / 全 ${currentCourse.length} 問`;
         document.getElementById('question-text').innerText = q.q;
-        document.getElementById('btn0').innerText = q.choices[0];
-        document.getElementById('btn1').innerText = q.choices[1];
         
-        // リセット
-        document.getElementById('feedback').innerText = "";
-        document.getElementById('comment-text').classList.add('hidden');
-        document.getElementById('next-btn').classList.add('hidden');
+        // 表示のリセット
+        document.getElementById('answer-area').classList.add('hidden');
+        const choicesArea = document.getElementById('choices-area');
+        choicesArea.innerHTML = '';
+        choicesArea.classList.remove('hidden');
+
+        // 選択肢ボタンの生成
+        q.choices.forEach((choice, idx) => {
+            const btn = document.createElement('button');
+            btn.className = 'btn btn-choice';
+            btn.innerText = choice;
+            btn.onclick = () => checkAnswer(idx);
+            choicesArea.appendChild(btn);
+        });
     }
 
-    // 回答判定
     function checkAnswer(choiceIdx) {
         const q = currentCourse[currentIndex];
         const feedback = document.getElementById('feedback');
-        const comment = document.getElementById('comment-text');
-
+        
         if (choiceIdx === q.a) {
+            // 正解時の挙動
+            document.getElementById('choices-area').classList.add('hidden');
+            document.getElementById('answer-area').classList.remove('hidden');
+            
             feedback.innerText = "⭕️ 正解！！";
             feedback.style.color = "#4caf50";
-            comment.innerText = q.comment;
-            comment.classList.remove('hidden');
-            document.getElementById('next-btn').classList.remove('hidden');
-            createConfetti(20);
+            document.getElementById('quiz-image').src = q.img;
+            document.getElementById('comment-text').innerText = q.comment;
+            createConfetti(25);
         } else {
-            feedback.innerText = "❌ 違うよ〜！考えてみて！";
+            // 不正解時
+            feedback.innerText = "❌ 違うよ〜！";
             feedback.style.color = "#f44336";
+            // 選択肢エリアにフィードバックを一瞬出すための処理
+            const choicesArea = document.getElementById('choices-area');
+            if(!document.getElementById('feedback-temp')){
+                const temp = document.createElement('div');
+                temp.id = 'feedback-temp';
+                choicesArea.prepend(temp);
+            }
+            document.getElementById('feedback-temp').innerText = "❌ もう一度選んでみて！";
+            document.getElementById('feedback-temp').style.color = "red";
         }
     }
 
-    // 次の問題へ
     function nextQuestion() {
         currentIndex++;
         if (currentIndex < currentCourse.length) {
@@ -242,20 +208,17 @@
         }
     }
 
-    // 最終画面表示
     function showFinalScreen() {
         document.getElementById('quiz-screen').classList.add('hidden');
         document.getElementById('result-screen').classList.remove('hidden');
-        // お祝いの大量紙吹雪
         let count = 0;
         const interval = setInterval(() => {
-            createConfetti(30);
+            createConfetti(40);
             count++;
-            if(count > 5) clearInterval(interval);
+            if(count > 6) clearInterval(interval);
         }, 500);
     }
 
-    // 紙吹雪エフェクト
     function createConfetti(num) {
         for (let i = 0; i < num; i++) {
             const confetti = document.createElement('div');
@@ -263,21 +226,14 @@
             confetti.style.left = Math.random() * 100 + 'vw';
             confetti.style.top = '-10px';
             confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 70%)`;
-            confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
             document.body.appendChild(confetti);
-
             const animation = confetti.animate([
                 { transform: 'translate3d(0,0,0) rotate(0deg)', opacity: 1 },
                 { transform: `translate3d(${(Math.random()-0.5)*200}px, 100vh, 0) rotate(${Math.random()*360}deg)`, opacity: 0 }
-            ], {
-                duration: 2000 + Math.random() * 1000,
-                easing: 'cubic-bezier(0, .9, .57, 1)'
-            });
-
+            ], { duration: 2000 + Math.random() * 1000, easing: 'cubic-bezier(0, .9, .57, 1)' });
             animation.onfinish = () => confetti.remove();
         }
     }
 </script>
-
 </body>
 </html>
