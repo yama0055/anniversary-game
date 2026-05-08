@@ -55,6 +55,7 @@
             overflow: hidden;
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             border: 4px solid white;
+            background-color: #fdfdfd;
         }
 
         .slide {
@@ -65,12 +66,12 @@
             height: 100%;
             object-fit: cover;
             opacity: 0;
-            transition: opacity 1.5s ease-in-out;
+            transition: opacity 1.2s ease-in-out;
         }
 
         .slide.active { opacity: 1; }
 
-        /* 写真フレーム（クイズ・結果用） */
+        /* 写真フレーム */
         .photo-frame {
             width: 100%;
             max-height: 250px;
@@ -115,7 +116,6 @@
         #scrolling-message { font-size: 16px; line-height: 2; white-space: pre-wrap; margin: 20px 0; }
         .confetti { position: fixed; width: 8px; height: 8px; z-index: 1000; }
 
-        /* イースターエッグ */
         #easter-egg-message {
             position: fixed;
             top: 50%;
@@ -138,10 +138,7 @@
     <!-- 1. コース選択画面 -->
     <div id="course-select">
         <div id="slideshow-container">
-            <!-- タイトル用スライド（ここを好きな写真に変更してください） -->
-            <img src="images/title1.jpg" class="slide active">
-            <img src="images/title2.jpg" class="slide">
-            <img src="images/title3.jpg" class="slide">
+            <!-- JSでここに画像が生成されます -->
         </div>
         <h2>かわやまクイズ！</h2>
         <div id="days-count"></div>
@@ -182,7 +179,6 @@
     </div>
 </div>
 
-<!-- 隠しメッセージ -->
 <div id="easter-egg-message" class="hidden" onclick="this.classList.add('hidden')">
     🌟 隠しメッセージ 🌟<br><br>
     出会ってくれてありがとう。<br>
@@ -201,7 +197,24 @@
     }
     updateDaysCount();
 
-    // 2. タイトルスライドショー
+    // 2. タイトルスライドショーの自動生成
+    const titleImages = [
+        'images/title1.jpg', 'images/title2.jpg', 'images/title3.jpg', 
+        'images/title4.jpg', 'images/title5.jpg', 'images/title6.jpg',
+        'images/title7.jpg', 'images/title8.jpg', 'images/title9.jpg',
+        'images/title10.jpg', 'images/title11.jpg', 'images/title12.jpg',
+        'images/title13.jpg', 'images/title14.jpg', 'images/title15.jpg',
+        'images/title16.jpg', 'images/title17.jpg', 'images/title18.jpg'
+    ];
+
+    const slideshowContainer = document.getElementById('slideshow-container');
+    titleImages.forEach((src, index) => {
+        const img = document.createElement('img');
+        img.src = src;
+        img.className = 'slide' + (index === 0 ? ' active' : '');
+        slideshowContainer.appendChild(img);
+    });
+
     let slideIndex = 0;
     const slides = document.querySelectorAll('.slide');
     if(slides.length > 0) {
@@ -209,12 +222,12 @@
             slides[slideIndex].classList.remove('active');
             slideIndex = (slideIndex + 1) % slides.length;
             slides[slideIndex].classList.add('active');
-        }, 3000); // 3秒ごとに切り替え
+        }, 2500); // 18枚あるので少し早めの2.5秒間隔に調整
     }
 
-    // 3. イースターエッグ（スライドショー部分を3回タップ）
+    // 3. イースターエッグ
     let tapCount = 0;
-    document.getElementById('slideshow-container').onclick = function() {
+    slideshowContainer.onclick = function() {
         tapCount++;
         if (tapCount === 3) {
             document.getElementById('easter-egg-message').classList.remove('hidden');
