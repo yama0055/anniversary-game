@@ -37,7 +37,7 @@
         .hidden { display: none; }
         h2 { color: #d63384; margin-bottom: 20px; }
 
-        /* 写真：解説画面のみ表示 */
+        /* 画像フレーム共通設定 */
         .photo-frame {
             width: 100%;
             max-height: 250px;
@@ -46,6 +46,12 @@
             margin: 15px 0;
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             border: 4px solid white;
+        }
+
+        /* タイトル画像専用（少し大きめ） */
+        .title-photo {
+            max-height: 300px;
+            margin-bottom: 25px;
         }
 
         /* ボタン */
@@ -79,8 +85,9 @@
 <body>
 
 <div id="game-container">
-    <!-- 1. コース選択画面 -->
+    <!-- 1. コース選択画面（タイトル画像追加） -->
     <div id="course-select">
+        <img src="images/title.jpg" class="photo-frame title-photo" alt="タイトル写真">
         <h2>Memory Quiz ❤️</h2>
         <p>二人の軌跡を振り返ろう</p>
         <button class="btn" onclick="startCourse('enkyori')">遠距離編</button>
@@ -93,7 +100,6 @@
         <p id="question-count" style="font-size: 0.8em; color: #999;"></p>
         <h3 id="question-text" style="margin: 20px 0;"></h3>
         
-        <!-- 解説時のみ表示されるエリア -->
         <div id="answer-area" class="hidden">
             <div id="feedback"></div>
             <img id="quiz-image" class="photo-frame" src="" alt="思い出の写真">
@@ -101,7 +107,6 @@
             <button id="next-btn" class="btn btn-next" onclick="nextQuestion()">次へ進む ✨</button>
         </div>
 
-        <!-- 選択肢エリア -->
         <div id="choices-area"></div>
     </div>
 
@@ -125,15 +130,15 @@
 <script>
     const quizData = {
         enkyori: [
-            { q: "遠距離が始まった日はいつでしょう？", choices: ["3月の3週目", "3月の4週目"], a: 1, img: "1.jpg", comment: "3/27が最終日。ギリギリまで粘ったのが懐かしい。。" },
-            { q: "遠距離が始まる前に食べた晩御飯は何でしょう？", choices: ["ピザ", "牛タン"], a: 1, img: "2.jpg", comment: "また食べに行きたい。行く。" },
-            { q: "遠距離が始まって最初に訪れた場所はどこでしょう？", choices: ["大阪城公園", "小動物カフェ"], a: 0, img: "3.jpg", comment: "ピクニックの良さに気付いた日。" },
-            { q: "遠距離になってから2人で訪れた旅行先は合計何県でしょう？（大阪、愛媛を除く）", choices: ["７", "１１", "１３"], a: 1, img: "4.jpg", comment: "愛知、香川、沖縄、滋賀、岐阜、福岡、佐賀、長崎、石川、福井、三重に行きました！目指せ全国制覇！" },
-            { q: "遠距離になってからかわとやまは合計何回飛行機に乗ったでしょう？", choices: ["72回", "82回", "92回"], a: 2, img: "5.jpg", comment: "大阪26回、愛媛17回、沖縄1回、福岡1回、東京：1回の内訳。ANAありがとう。。\nちなみに香川は4回。" },
-            { q: "遠距離を始めてから同棲開始までどれくらいの日付が経ったでしょう？", choices: ["585日", "685日", "785日"], a: 2, img: "6.jpg", comment: "約6782万秒耐えたらしい。すごい。" },
-            { q: "やまはなぜ奈良に行く決断ができたでしょう？", choices: ["かわと一緒に過ごしていきたいから。", "なんとなく。"], a: 0, img: "7.jpg", comment: "一緒に幸せに過ごしていこうね！" }
+            { q: "遠距離が始まった日はいつでしょう？", choices: ["3月の3週目", "3月の4週目"], a: 1, img: "images/1.jpg", comment: "3/27が最終日。ギリギリまで粘ったのが懐かしい。。" },
+            { q: "遠距離が始まる前に食べた晩御飯は何でしょう？", choices: ["ピザ", "牛タン"], a: 1, img: "images/2.jpg", comment: "また食べに行きたい。行く。" },
+            { q: "遠距離が始まって最初に訪れた場所はどこでしょう？", choices: ["大阪城公園", "小動物カフェ"], a: 0, img: "images/3.jpg", comment: "ピクニックの良さに気付いた日。" },
+            { q: "遠距離になってから2人で訪れた旅行先は合計何県でしょう？（大阪、愛媛を除く）", choices: ["７", "１１", "１３"], a: 1, img: "images/4.jpg", comment: "愛知、香川、沖縄、滋賀、岐阜、福岡、佐賀、長崎、石川、福井、三重に行きました！目指せ全国制覇！" },
+            { q: "遠距離になってからかわとやまは合計何回飛行機に乗ったでしょう？", choices: ["72回", "82回", "92回"], a: 2, img: "images/5.jpg", comment: "大阪26回、愛媛17回、沖縄1回、福岡1回、東京：1回の内訳。ANAありがとう。。\nちなみに香川は4回。" },
+            { q: "遠距離を始めてから同棲開始までどれくらいの日付が経ったでしょう？", choices: ["585日", "685日", "785日"], a: 2, img: "images/6.jpg", comment: "約6782万秒耐えたらしい。すごい。" },
+            { q: "やまはなぜ奈良に行く決断ができたでしょう？", choices: ["かわと一緒に過ごしていきたいから。", "なんとなく。"], a: 0, img: "images/7.jpg", comment: "一緒に幸せに過ごしていこうね！" }
         ],
-        courseB: [], courseC: [] // 必要に応じて追加
+        courseB: [], courseC: []
     };
 
     let currentCourse = [];
@@ -141,7 +146,7 @@
 
     function startCourse(courseId) {
         currentCourse = quizData[courseId];
-        if (currentCourse.length === 0) return alert("準備中だよ！");
+        if (!currentCourse || currentCourse.length === 0) return alert("準備中だよ！");
         currentIndex = 0;
         document.getElementById('course-select').classList.add('hidden');
         document.getElementById('quiz-screen').classList.remove('hidden');
@@ -152,14 +157,11 @@
         const q = currentCourse[currentIndex];
         document.getElementById('question-count').innerText = `第 ${currentIndex + 1} 問 / 全 ${currentCourse.length} 問`;
         document.getElementById('question-text').innerText = q.q;
-        
-        // 表示のリセット
         document.getElementById('answer-area').classList.add('hidden');
         const choicesArea = document.getElementById('choices-area');
         choicesArea.innerHTML = '';
         choicesArea.classList.remove('hidden');
 
-        // 選択肢ボタンの生成
         q.choices.forEach((choice, idx) => {
             const btn = document.createElement('button');
             btn.className = 'btn btn-choice';
@@ -174,20 +176,16 @@
         const feedback = document.getElementById('feedback');
         
         if (choiceIdx === q.a) {
-            // 正解時の挙動
             document.getElementById('choices-area').classList.add('hidden');
             document.getElementById('answer-area').classList.remove('hidden');
-            
             feedback.innerText = "⭕️ 正解！！";
             feedback.style.color = "#4caf50";
             document.getElementById('quiz-image').src = q.img;
             document.getElementById('comment-text').innerText = q.comment;
             createConfetti(25);
         } else {
-            // 不正解時
             feedback.innerText = "❌ 違うよ〜！";
             feedback.style.color = "#f44336";
-            // 選択肢エリアにフィードバックを一瞬出すための処理
             const choicesArea = document.getElementById('choices-area');
             if(!document.getElementById('feedback-temp')){
                 const temp = document.createElement('div');
