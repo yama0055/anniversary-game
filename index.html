@@ -116,7 +116,7 @@
             line-height: 1.8; 
             white-space: pre-wrap; 
             margin: 20px 0; 
-            text-align: left; /* お手紙風に左寄せに変更 */
+            text-align: left; 
             color: #444;
         }
         
@@ -199,7 +199,7 @@
         const today = new Date();
         const diffTime = today - start;
         const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-        document.getElementById('days-count').innerText = `今日で付き合って ${diffDays} 日目だね ♡`;
+        document.getElementById('days-count').innerText = `今日で付き合って ${diffDays} 日目！`;
     }
     updateDaysCount();
 
