@@ -32,11 +32,45 @@
             border-radius: 25px;
             box-shadow: 0 15px 35px rgba(0,0,0,0.15);
             text-align: center;
+            position: relative;
         }
 
         .hidden { display: none; }
-        h2 { color: #d63384; margin-bottom: 20px; }
+        h2 { color: #d63384; margin-bottom: 5px; }
 
+        #days-count {
+            font-size: 0.9em;
+            color: #d63384;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        /* スライドショーのスタイル */
+        #slideshow-container {
+            width: 100%;
+            height: 300px;
+            margin-bottom: 25px;
+            position: relative;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border: 4px solid white;
+        }
+
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out;
+        }
+
+        .slide.active { opacity: 1; }
+
+        /* 写真フレーム（クイズ・結果用） */
         .photo-frame {
             width: 100%;
             max-height: 250px;
@@ -45,11 +79,6 @@
             margin: 15px 0;
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             border: 4px solid white;
-        }
-
-        .title-photo {
-            max-height: 300px;
-            margin-bottom: 25px;
         }
 
         .btn {
@@ -66,13 +95,11 @@
             background: white;
             border: 2px solid var(--main-pink);
             color: #d63384;
-            text-decoration: none;
         }
 
         .btn:active:not(:disabled) { transform: scale(0.96); }
         .btn-choice:hover:not(:disabled) { background: var(--main-pink); color: white; }
         
-        /* 非活性ボタンのスタイル */
         .btn:disabled {
             background: #eee;
             border-color: #ccc;
@@ -87,6 +114,22 @@
 
         #scrolling-message { font-size: 16px; line-height: 2; white-space: pre-wrap; margin: 20px 0; }
         .confetti { position: fixed; width: 8px; height: 8px; z-index: 1000; }
+
+        /* イースターエッグ */
+        #easter-egg-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            border: 3px solid var(--main-pink);
+            z-index: 2000;
+            font-weight: bold;
+            color: #d63384;
+            box-shadow: 0 0 30px rgba(0,0,0,0.3);
+        }
     </style>
 </head>
 <body>
@@ -94,8 +137,14 @@
 <div id="game-container">
     <!-- 1. コース選択画面 -->
     <div id="course-select">
-        <img src="images/title.jpg" class="photo-frame title-photo" alt="タイトル写真">
+        <div id="slideshow-container">
+            <!-- タイトル用スライド（ここを好きな写真に変更してください） -->
+            <img src="images/title1.jpg" class="slide active">
+            <img src="images/title2.jpg" class="slide">
+            <img src="images/title3.jpg" class="slide">
+        </div>
         <h2>かわやまクイズ！</h2>
+        <div id="days-count"></div>
         <button class="btn btn-choice" onclick="startCourse('enkyori')">遠距離編</button>
         <button class="btn" disabled>準備中</button>
         <button class="btn" disabled>準備中</button>
@@ -110,7 +159,7 @@
             <div id="feedback"></div>
             <img id="quiz-image" class="photo-frame" src="" alt="思い出の写真">
             <div id="comment-text"></div>
-            <button id="next-btn" class="btn btn-next" onclick="nextQuestion()">次へ進む ✨</button>
+            <button id="next-btn" class="btn btn-next" onclick="nextQuestion()">次に進む</button>
         </div>
 
         <div id="choices-area"></div>
@@ -129,11 +178,52 @@
 いつも支えてくれてありがとう。
 これからも隣で一緒に幸せになろうね！
         </div>
-        <button class="btn" style="background: var(--main-pink); color: white;" onclick="location.reload()">最初から遊ぶ</button>
+        <button class="btn" style="background: var(--main-pink); color: white;" onclick="location.reload()">タイトルに戻る</button>
     </div>
 </div>
 
+<!-- 隠しメッセージ -->
+<div id="easter-egg-message" class="hidden" onclick="this.classList.add('hidden')">
+    🌟 隠しメッセージ 🌟<br><br>
+    出会ってくれてありがとう。<br>
+    ずっと大切にするよ！<br><br>
+    <span style="font-size: 0.8em; color: #999;">(タップして閉じる)</span>
+</div>
+
 <script>
+    // 1. 付き合った日数の計算
+    function updateDaysCount() {
+        const start = new Date('2024-09-30');
+        const today = new Date();
+        const diffTime = today - start;
+        const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+        document.getElementById('days-count').innerText = `今日で付き合って ${diffDays} 日目だね ♡`;
+    }
+    updateDaysCount();
+
+    // 2. タイトルスライドショー
+    let slideIndex = 0;
+    const slides = document.querySelectorAll('.slide');
+    if(slides.length > 0) {
+        setInterval(() => {
+            slides[slideIndex].classList.remove('active');
+            slideIndex = (slideIndex + 1) % slides.length;
+            slides[slideIndex].classList.add('active');
+        }, 3000); // 3秒ごとに切り替え
+    }
+
+    // 3. イースターエッグ（スライドショー部分を3回タップ）
+    let tapCount = 0;
+    document.getElementById('slideshow-container').onclick = function() {
+        tapCount++;
+        if (tapCount === 3) {
+            document.getElementById('easter-egg-message').classList.remove('hidden');
+            createConfetti(50);
+            tapCount = 0;
+        }
+        setTimeout(() => { tapCount = 0; }, 3000);
+    };
+
     const quizData = {
         enkyori: [
             { q: "遠距離が始まった日はいつでしょう？", choices: ["3月の3週目", "3月の4週目"], a: 1, img: "images/1.jpg", comment: "3/27が最終日。ギリギリまで粘ったのが懐かしい。。" },
@@ -189,7 +279,7 @@
             document.getElementById('comment-text').innerText = q.comment;
             createConfetti(25);
         } else {
-            feedback.innerText = "❌ 違うよ〜！";
+            feedback.innerText = "❌ 不正解。。";
             feedback.style.color = "#f44336";
             const choicesArea = document.getElementById('choices-area');
             if(!document.getElementById('feedback-temp')){
@@ -197,7 +287,7 @@
                 temp.id = 'feedback-temp';
                 choicesArea.prepend(temp);
             }
-            document.getElementById('feedback-temp').innerText = "❌ もう一度選んでみて！";
+            document.getElementById('feedback-temp').innerText = "❌ もう一度選んでね！";
             document.getElementById('feedback-temp').style.color = "red";
         }
     }
